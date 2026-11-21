@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Literal, Optional
-from pydantic import BaseModel, EmailStr
-
-from server.models import Post
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class UserCreate(BaseModel):
@@ -10,14 +8,12 @@ class UserCreate(BaseModel):
     password: str
 
 class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     email: EmailStr
     created_at: datetime
     
-    class Config:
-        from_attributes = True
-
-
+    
 class PostBase(BaseModel):
     title: str
     content: str
@@ -30,13 +26,11 @@ class PostUpdate(PostBase):
     pass
 
 class PostResponse(PostBase):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     created_at: datetime
     owner_id: int
     owner: UserOut 
-
-    class Config:
-        from_attributes = True
 
 class PostOut(PostResponse):
     votes: int
