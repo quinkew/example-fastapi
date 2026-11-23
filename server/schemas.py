@@ -9,6 +9,7 @@ class UserCreate(BaseModel):
 
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+
     id: int
     email: EmailStr
     created_at: datetime
@@ -27,12 +28,14 @@ class PostUpdate(PostBase):
 
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: datetime
     owner_id: int
     owner: UserOut 
 
-class PostOut(PostResponse):
+class PostOut(BaseModel):
+    Post: PostResponse
     votes: int
 
 

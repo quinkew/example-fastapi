@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, post, user, vote
-
+from . import models
+from .database import engine
 
 app = FastAPI()
 
@@ -15,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# models.Base.metadata.create_all(bind=engine)
 
 app.include_router(post.router)
 app.include_router(user.router)

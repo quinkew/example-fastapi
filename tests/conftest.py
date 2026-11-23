@@ -17,7 +17,6 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 
 @pytest.fixture(scope='function')
 def session():
-    print('my session fixture ran')
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
     db = TestingSessionLocal()
@@ -40,8 +39,18 @@ def client(session):
 
 @pytest.fixture   
 def test_user(client):
-    user_data = {'email': 'testclient@gmail.com',
-                 'password': 'test'}
+    user_data = {'email': 'testclient1@gmail.com',
+                 'password': 'test1'}
+    res = client.post('/users/', json=user_data)
+    assert res.status_code == 201
+    new_user = res.json()
+    new_user['password'] = user_data['password']
+    return new_user
+
+@pytest.fixture   
+def test_user2(client):
+    user_data = {'email': 'testclient12@gmail.com',
+                 'password': 'test12'}
     res = client.post('/users/', json=user_data)
     assert res.status_code == 201
     new_user = res.json()
@@ -61,3 +70,35 @@ def authorized_client(client, token):
     return client
 
 
+@pytest.fixture
+def test_posts(test_user, test_user2, session):
+    posts_data = [{
+        'title': 'first title',
+        'content': 'first content',
+        'owner_id': test_user['id']
+    }, {
+        'title': 'second title',
+        'content': 'second content',
+        'owner_id': test_user['id']
+    }, {
+        'title': 'third title',
+        'content': 'third content',
+        'owner_id': test_user['id']
+    }, {
+        'title': 'fourth title',
+        'content': 'fourth content',
+        'owner_id': test_user2['id']
+    }]
+
+    def create_post_model(post):
+        return models.Post(**post)
+
+    post_map = map(create_post_model, posts_data)
+    posts = list(post_map)
+
+    session.add_all(posts)
+    session.commit()
+    
+    posts = session.query(models.Post).all()
+
+    return posts
