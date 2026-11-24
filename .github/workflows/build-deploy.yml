@@ -8,8 +8,11 @@ jobs:
     steps:
       - name: pulling git repo
         uses: actions/checkout@v2
-      - name: say hi to me
-        run: echo 'hello there!'
-        
-
-
+      - name: install python version 3.14
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.14'
+      - name:
+        run: python -m pip install --upgrade pip 
+      - name: install all dependencies
+        run: pip install -r requirements.txt
