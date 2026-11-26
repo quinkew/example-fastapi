@@ -1,7 +1,7 @@
 import pytest
 from server import schemas
 from jose import jwt
-from server.config import settings
+from server.core.config import settings
 
 
 def test_create_user(client):

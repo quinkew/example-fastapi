@@ -4,7 +4,7 @@ from server.main import app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from server.database import get_db, Base
-from server.config import settings
+from server.core.config import settings
 from server.oauth2 import create_access_token
 import pytest
 

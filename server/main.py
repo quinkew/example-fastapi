@@ -1,28 +1,12 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, post, user, vote
+from .routers import main_router
 from . import models
 from .database import engine
+from .core.middleware import setup_middlewares
 
-app = FastAPI()
+app = FastAPI(title='Social Media')
 
-origins = ['*']
+app.include_router(main_router)
+setup_middlewares(app)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"]
-)
-
-# models.Base.metadata.create_all(bind=engine)
-
-app.include_router(post.router)
-app.include_router(user.router)
-app.include_router(auth.router)
-app.include_router(vote.router)
-
-@app.get("/")
-def root():
-    return {"message": "some changes for you"}
+# models.Base.metadata.create_all(bind=engine) в случае если alembic не будет работать
